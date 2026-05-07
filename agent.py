@@ -9,6 +9,8 @@ MAX_MEMORY = 100_000
 BATCH_SIZE = 64
 LR = 0.001
 
+import os # Model yükleme yolunu kontrol etmek için
+
 class Agent:
     def __init__(self):
         self.n_games = 0
@@ -19,6 +21,16 @@ class Agent:
         # Model (Policy Network)
         # 11 Girdi(state vektörü), 256 Gizli Katman, 3 Çıktı(Q-value tahmini)
         self.model = Linear_QNet(11, 256, 3)
+        
+        # Eğitime kalındığı yerden devam etmek için kayıtlı modeli yükle
+        model_path = './model/model.pth'
+        if os.path.exists(model_path):
+            self.model.load_state_dict(torch.load(model_path))
+            print(">>> Kaydedilmiş model başarıyla yüklendi! Eğitim kaldığı yerden devam ediyor... <<<")
+            
+            # Eğer daha önceden eğitilmiş model varsa çok fazla rastgele hamle yapmasına gerek yok
+            # Yarı keşif yarı bildiğini okuma modunda başlasın (isteğe göre değiştirilebilir)
+            self.epsilon = 0.10
         
         # Target Network (Hedef Ağ)
         self.target_model = Linear_QNet(11, 256, 3)

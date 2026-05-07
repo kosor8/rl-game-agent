@@ -22,6 +22,12 @@ BLUE1 = (0, 0, 255)
 BLUE2 = (0, 100, 255)
 BLACK = (0,0,0)
 
+# Yeni Tema Renkleri
+LIGHT_GREEN = (170, 215, 81)
+DARK_GREEN = (162, 209, 73)
+HEAD_COLOR_OUTER = (0, 50, 150)
+HEAD_COLOR_INNER = (0, 200, 255)
+
 BLOCK_SIZE = 20
 SPEED = 40 # İnsan için 10-15 ideal, yapay zeka eğitirken hızlandırmak için 40+ yapabiliriz
 
@@ -107,15 +113,26 @@ class SnakeGameAI:
         return False
         
     def _update_ui(self):
-        self.display.fill(BLACK)
-        
-        for pt in self.snake:
-            pygame.draw.rect(self.display, BLUE1, pygame.Rect(pt.x, pt.y, BLOCK_SIZE, BLOCK_SIZE))
-            pygame.draw.rect(self.display, BLUE2, pygame.Rect(pt.x+4, pt.y+4, 12, 12))
+        # Satranç tahtası (Zemin)
+        for row in range(int(self.h / BLOCK_SIZE)):
+            for col in range(int(self.w / BLOCK_SIZE)):
+                color = LIGHT_GREEN if (row + col) % 2 == 0 else DARK_GREEN
+                pygame.draw.rect(self.display, color, pygame.Rect(col * BLOCK_SIZE, row * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE))
+                
+        # Yılanı çizdirme
+        for idx, pt in enumerate(self.snake):
+            if idx == 0:
+                # Baş kısmı
+                pygame.draw.rect(self.display, HEAD_COLOR_OUTER, pygame.Rect(pt.x, pt.y, BLOCK_SIZE, BLOCK_SIZE))
+                pygame.draw.rect(self.display, HEAD_COLOR_INNER, pygame.Rect(pt.x+4, pt.y+4, 12, 12))
+            else:
+                # Gövde kısmı
+                pygame.draw.rect(self.display, BLUE1, pygame.Rect(pt.x, pt.y, BLOCK_SIZE, BLOCK_SIZE))
+                pygame.draw.rect(self.display, BLUE2, pygame.Rect(pt.x+4, pt.y+4, 12, 12))
             
         pygame.draw.rect(self.display, RED, pygame.Rect(self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
         
-        text = font.render("Skor: " + str(self.score), True, WHITE)
+        text = font.render("Skor: " + str(self.score), True, BLACK) # Yazı rengini zemine uyumlu siyah yaptık
         self.display.blit(text, [0, 0])
         pygame.display.flip()
         
