@@ -1,5 +1,6 @@
 from agent import Agent
 from snake_game import SnakeGameAI
+from helper import plot
 
 TARGET_UPDATE_FREQUENCY = 10 # Her 10 oyunda bir Target Network'ü güncelle
 
@@ -12,6 +13,10 @@ def train():
     epsilon_min = 0.01
     epsilon_decay = 0.99
     
+    # Grafikler için listeler
+    plot_scores = []
+    plot_mean_scores = []
+    plot_epsilons = []
     total_score = 0
     
     print("Eğitim Başlıyor...")
@@ -59,7 +64,15 @@ def train():
             total_score += score
             mean_score = total_score / agent.n_games
             
+            # Grafiğe eklenecek değerleri kaydet
+            plot_scores.append(score)
+            plot_mean_scores.append(mean_score)
+            plot_epsilons.append(agent.epsilon)
+            
             print(f"Oyun: {agent.n_games} | Skor: {score} | Rekor: {record} | Ortalama Skor: {mean_score:.2f} | Epsilon: {agent.epsilon:.3f}")
+            
+            # Grafiği güncelle
+            plot(plot_scores, plot_mean_scores, plot_epsilons)
 
 if __name__ == '__main__':
     train()
