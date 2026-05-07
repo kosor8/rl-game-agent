@@ -26,12 +26,14 @@ BLOCK_SIZE = 20
 SPEED = 40 # İnsan için 10-15 ideal, yapay zeka eğitirken hızlandırmak için 40+ yapabiliriz
 
 class SnakeGameAI:
-    def __init__(self, w=640, h=480):
+    def __init__(self, w=640, h=480, render_mode=True):
         self.w = w
         self.h = h
+        self.render_mode = render_mode
         # Ekranı oluştur
-        self.display = pygame.display.set_mode((self.w, self.h))
-        pygame.display.set_caption('Snake RL Environment')
+        if self.render_mode:
+            self.display = pygame.display.set_mode((self.w, self.h))
+            pygame.display.set_caption('Snake RL Environment')
         self.clock = pygame.time.Clock()
         self.reset()
         
@@ -59,10 +61,11 @@ class SnakeGameAI:
     def play_step(self, action):
         self.frame_iteration += 1
         # 1. Kullanıcı girdilerini kontrol et (Pencereyi kapatma vs.)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
+        if self.render_mode:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
         
         # 2. Hareket et
         self._move(action) # Aksiyonu uygula
@@ -85,8 +88,9 @@ class SnakeGameAI:
             self.snake.pop()
         
         # 5. Arayüzü güncelle ve saati ilerlet
-        self._update_ui()
-        self.clock.tick(SPEED)
+        if self.render_mode:
+            self._update_ui()
+            self.clock.tick(SPEED)
         
         # 6. Ödülü ve durumu döndür
         return reward, game_over, self.score
