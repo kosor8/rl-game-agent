@@ -28,11 +28,11 @@ DARK_GREEN = (162, 209, 73)
 HEAD_COLOR_OUTER = (0, 50, 150)
 HEAD_COLOR_INNER = (0, 200, 255)
 
-BLOCK_SIZE = 20
+BLOCK_SIZE = 30 # Orta karar büyüklük (Orijinali 20'ydi)
 SPEED = 40 # İnsan için 10-15 ideal, yapay zeka eğitirken hızlandırmak için 40+ yapabiliriz
 
 class SnakeGameAI:
-    def __init__(self, w=640, h=480, render_mode=True):
+    def __init__(self, w=960, h=720, render_mode=True):
         self.w = w
         self.h = h
         self.render_mode = render_mode
@@ -120,15 +120,18 @@ class SnakeGameAI:
                 pygame.draw.rect(self.display, color, pygame.Rect(col * BLOCK_SIZE, row * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE))
                 
         # Yılanı çizdirme
+        inner_offset = BLOCK_SIZE // 5
+        inner_size = BLOCK_SIZE - (2 * inner_offset)
+        
         for idx, pt in enumerate(self.snake):
             if idx == 0:
                 # Baş kısmı
                 pygame.draw.rect(self.display, HEAD_COLOR_OUTER, pygame.Rect(pt.x, pt.y, BLOCK_SIZE, BLOCK_SIZE))
-                pygame.draw.rect(self.display, HEAD_COLOR_INNER, pygame.Rect(pt.x+4, pt.y+4, 12, 12))
+                pygame.draw.rect(self.display, HEAD_COLOR_INNER, pygame.Rect(pt.x+inner_offset, pt.y+inner_offset, inner_size, inner_size))
             else:
                 # Gövde kısmı
                 pygame.draw.rect(self.display, BLUE1, pygame.Rect(pt.x, pt.y, BLOCK_SIZE, BLOCK_SIZE))
-                pygame.draw.rect(self.display, BLUE2, pygame.Rect(pt.x+4, pt.y+4, 12, 12))
+                pygame.draw.rect(self.display, BLUE2, pygame.Rect(pt.x+inner_offset, pt.y+inner_offset, inner_size, inner_size))
             
         pygame.draw.rect(self.display, RED, pygame.Rect(self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
         

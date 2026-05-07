@@ -57,6 +57,10 @@ def plot(scores, mean_scores, epsilons):
     ax2.tick_params(axis='y', labelcolor='tab:red')
     ax2.set_ylim(0, 1.05)
     
+    # Çizgilerin ne anlama geldiğini gösteren bilgi kutucukları (Legend)
+    ax1.legend(loc='upper left')
+    ax2.legend(loc='upper right')
+    
     fig.tight_layout()
     plt.show(block=False)
     plt.pause(0.1)

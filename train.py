@@ -20,6 +20,7 @@ def train():
     total_score = 0
     
     print("Eğitim Başlıyor...")
+    plot(plot_scores, plot_mean_scores, plot_epsilons) # Grafiği en başta boş olarak aç
     
     while True:
         # 1. Mevcut durumu (state) al
