@@ -9,7 +9,7 @@ import os
 def train():
     record = 0
     agent = Agent()
-    game = SnakeGameAI(render_mode=True) # Eğitim sürecini görsel olarak izlemek için açtık
+    game = SnakeGameAI(render_mode=False) # Eğitim sürecini görsel olarak izlemek için açtık
     
     # Eğer daha önce rekor kırılmışsa ve kaydedilmişse oku
     if os.path.exists('./model/record.txt'):

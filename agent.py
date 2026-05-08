@@ -3,7 +3,7 @@ import random
 import numpy as np
 from collections import deque
 from snake_game import Direction, Point, BLOCK_SIZE
-from model import Linear_QNet, QTrainer
+from model import Linear_QNet, QTrainer, device
 
 MAX_MEMORY = 100_000
 BATCH_SIZE = 64
@@ -20,20 +20,20 @@ class Agent:
         
         # Model (Policy Network)
         # 11 Girdi(state vektörü), 256 Gizli Katman, 3 Çıktı(Q-value tahmini)
-        self.model = Linear_QNet(11, 256, 3)
+        self.model = Linear_QNet(11, 256, 3).to(device)
         
         # Eğitime kalındığı yerden devam etmek için kayıtlı modeli yükle
         model_path = './model/model.pth'
         if os.path.exists(model_path):
-            self.model.load_state_dict(torch.load(model_path))
-            print(">>> Kaydedilmiş model başarıyla yüklendi! Eğitim kaldığı yerden devam ediyor... <<<")
+            self.model.load_state_dict(torch.load(model_path, map_location=device))
+            print(f">>> Kaydedilmiş model başarıyla yüklendi! Eğitim kaldığı yerden devam ediyor ({device})... <<<")
             
             # Eğer daha önceden eğitilmiş model varsa çok fazla rastgele hamle yapmasına gerek yok
             # Yarı keşif yarı bildiğini okuma modunda başlasın (isteğe göre değiştirilebilir)
             self.epsilon = 0.10
         
         # Target Network (Hedef Ağ)
-        self.target_model = Linear_QNet(11, 256, 3)
+        self.target_model = Linear_QNet(11, 256, 3).to(device)
         self.target_model.load_state_dict(self.model.state_dict())
         self.target_model.eval() # Target network sadece tahmin içindir
         
@@ -151,7 +151,7 @@ class Agent:
             final_move[move] = 1
         else:
             # Tahmin (Prediction)
-            state0 = torch.tensor(state, dtype=torch.float)
+            state0 = torch.tensor(state, dtype=torch.float).to(device)
             prediction = self.model(state0)
             move = torch.argmax(prediction).item()
             final_move[move] = 1

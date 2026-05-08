@@ -36,6 +36,7 @@ class SnakeGameAI:
         self.w = w
         self.h = h
         self.render_mode = render_mode
+        self.fps = SPEED # Başlangıç hızı
         # Ekranı oluştur
         if self.render_mode:
             self.display = pygame.display.set_mode((self.w, self.h))
@@ -72,6 +73,11 @@ class SnakeGameAI:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_UP:
+                        self.fps += 10 # Yukarı ok tuşu ile hızlandır
+                    elif event.key == pygame.K_DOWN:
+                        self.fps = max(10, self.fps - 10) # Aşağı ok tuşu ile yavaşlat (minimum 10)
         
         # 2. Hareket et
         self._move(action) # Aksiyonu uygula
@@ -96,7 +102,7 @@ class SnakeGameAI:
         # 5. Arayüzü güncelle ve saati ilerlet
         if self.render_mode:
             self._update_ui()
-            self.clock.tick(SPEED)
+            self.clock.tick(self.fps)
         
         # 6. Ödülü ve durumu döndür
         return reward, game_over, self.score
@@ -137,6 +143,11 @@ class SnakeGameAI:
         
         text = font.render("Skor: " + str(self.score), True, BLACK) # Yazı rengini zemine uyumlu siyah yaptık
         self.display.blit(text, [0, 0])
+        
+        # FPS'i ekrana yazdır
+        fps_text = font.render(f"FPS: {self.fps}", True, BLACK)
+        self.display.blit(fps_text, [self.w - fps_text.get_width() - 10, 0])
+        
         pygame.display.flip()
         
     def _move(self, action):
