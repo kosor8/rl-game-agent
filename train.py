@@ -4,10 +4,21 @@ from helper import plot
 
 TARGET_UPDATE_FREQUENCY = 10 # Her 10 oyunda bir Target Network'ü güncelle
 
+import os
+
 def train():
     record = 0
     agent = Agent()
     game = SnakeGameAI(render_mode=True) # Eğitim sürecini görsel olarak izlemek için açtık
+    
+    # Eğer daha önce rekor kırılmışsa ve kaydedilmişse oku
+    if os.path.exists('./model/record.txt'):
+        try:
+            with open('./model/record.txt', 'r') as f:
+                record = int(f.read().strip())
+                print(f"*** Önceki Rekor ({record}) Yüklendi! Artık model sadece bu skoru geçerse güncellenecek. ***")
+        except:
+            pass
     
     # Epsilon decay ayarları
     epsilon_min = 0.01
@@ -61,6 +72,10 @@ def train():
             if score > record:
                 record = score
                 agent.model.save()
+                
+                # Yeni rekoru text dosyasına da yaz
+                with open('./model/record.txt', 'w') as f:
+                    f.write(str(record))
                 
             total_score += score
             mean_score = total_score / agent.n_games
